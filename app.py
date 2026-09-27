@@ -1,8 +1,8 @@
 """Tonight's front desk: an overbooking game on top of a hotel-cancellation model.
 
-The model is not part of this repo. It lives on the Hugging Face Hub (MODEL_REPO) and is downloaded at start-up:
-model.joblib (scikit-learn pipeline + XGBoost), config.json (features, versions, metrics) and test_bookings.parquet
-(real bookings from months the model never trained on).
+The model sits next to the code, in model/: model.joblib (scikit-learn pipeline + XGBoost), config.json (features,
+versions, metrics), README.md (model card) and test_bookings.parquet (real bookings from months the model never
+trained on). To use your own model, replace those files with the ones the session 10 notebook writes.
 """
 import json, os
 from pathlib import Path
@@ -12,10 +12,8 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import xgboost as xgb
-from huggingface_hub import hf_hub_download
 
-MODEL_REPO = os.environ.get("MODEL_REPO", "AAUBS/hotel-cancellation-model")
-LOCAL_DIR = os.environ.get("LOCAL_MODEL_DIR")            # for testing before the model is published
+MODEL_DIR = Path(__file__).parent / "model"
 NIGHTS_PER_GAME, GUT_CANCEL_RATE, MAX_EXTRA = 5, 0.37, 40
 GIF = {k: f"https://media.giphy.com/media/{v}/giphy.gif" for k, v in {
     "welcome": "MCudzuADLuJWw", "thinking": "WRQBXSCnEFJIuxktnw", "fire": "Z1BTGhofioRxK",
@@ -33,7 +31,7 @@ st.set_page_config(page_title="Tonight's front desk", page_icon="🛎️", layou
 # ---------------------------------------------------------------- the model, loaded once per server
 @st.cache_resource
 def load():
-    get = (lambda f: str(Path(LOCAL_DIR) / f)) if LOCAL_DIR else (lambda f: hf_hub_download(MODEL_REPO, f))
+    get = lambda f: MODEL_DIR / f
     pipe = joblib.load(get("model.joblib"))
     config = json.load(open(get("config.json")))
     card = open(get("README.md")).read().split("---", 2)[-1].replace("\n# ", "\n#### ")
@@ -81,7 +79,7 @@ with st.sidebar:
     walk_cost = st.slider("Cost of walking a guest (EUR)", 100, 600, 250, 25,
                           help="Taxi, a room in another hotel, and an angry review.")
     hints = st.toggle("Show the model's forecast", value=True, help="Hard mode: play on gut feeling alone.")
-    st.caption(f"Model: [{MODEL_REPO}](https://huggingface.co/{MODEL_REPO}) · version {config['version']}")
+    st.caption(f"Model: `model/model.joblib` · version {config['version']} · test AUC {config['metrics_test']['auc']}")
 
 st.title("🛎️ Tonight's front desk")
 tab_game, tab_check, tab_hood = st.tabs(["🎲 Play a night", "🔎 Check a booking", "⚙️ Under the hood"])
@@ -245,10 +243,9 @@ with tab_hood:
     st.graphviz_chart(f"""
 digraph {{ rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#F2F1F7", color="#211A52", fontname=Helvetica];
   user [label="Your browser"]; app [label="This app\\nStreamlit Community Cloud\\nbuilt from GitHub: app.py + requirements.txt"];
-  gh [label="GitHub repo\\naaubs/tonights-front-desk"]; gh -> app [label="build on push"];
-  hub [label="Model repo on the Hub\\n{MODEL_REPO}\\nmodel.joblib · config.json · README.md"];
+  gh [label="GitHub repo\\napp.py · requirements.txt\\nmodel/: model.joblib · config.json · README.md"];
   nb [label="Colab notebook\\ntrain, tune, check\\nsave the pipeline"];
-  nb -> hub [label="upload"]; hub -> app [label="download at start-up"]; user -> app [label="click"]; app -> user [label="page"]; }}
+  nb -> gh [label="commit model files"]; gh -> app [label="build on push"]; user -> app [label="click"]; app -> user [label="page"]; }}
 """)
     left, right = st.columns(2)
     with left:
@@ -263,6 +260,6 @@ digraph {{ rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#F2F1
 2. On [share.streamlit.io](https://share.streamlit.io), sign in with GitHub and **Create app** from your fork
    (file `app.py`, Python 3.12 under *Advanced settings*).
 3. Change something small in `app.py` on GitHub: the costs, a meme, the number of nights. Commit, and watch the app update.
-4. Optional: upload your own model from the notebook to the Hugging Face Hub and add `MODEL_REPO = "you/your-model"`
-   to the app's **Secrets**. Pin the versions from your `config.json` in `requirements.txt`.
+4. Optional: train your own model in the notebook, download the `hotel_model` folder, and replace the files in
+   your fork's `model/` folder. Pin the versions from your `config.json` in `requirements.txt`.
 """)
