@@ -1,0 +1,9 @@
+# Same versions as in the model's config.json: a pickled pipeline only loads reliably with these
+scikit-learn==1.6.1
+xgboost==3.4.1
+pandas==2.2.2
+numpy==2.0.2
+pyarrow==25.0.1
+joblib
+huggingface_hub>=1.0
+streamlit==1.64.0
