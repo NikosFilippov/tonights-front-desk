@@ -1,17 +1,17 @@
 """Tonight's front desk: an overbooking game on top of a hotel-cancellation model.
 
-The model sits next to the code, in model/: model.joblib (scikit-learn pipeline + XGBoost), config.json (features,
+The model sits next to the code, in model/: booster.json (XGBoost) + preprocess.json (scaling and one-hot, as plain
+numbers), config.json (features,
 versions, metrics), README.md (model card) and test_bookings.parquet (real bookings from months the model never
 trained on). To use your own model, replace those files with the ones the session 10 notebook writes.
 """
 import json, os
 from pathlib import Path
 
-import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
-import xgboost as xgb
+from portable import Model
 
 MODEL_DIR = Path(__file__).parent / "model"
 NIGHTS_PER_GAME, GUT_CANCEL_RATE, MAX_EXTRA = 5, 0.37, 40
@@ -32,12 +32,12 @@ st.set_page_config(page_title="Tonight's front desk", page_icon="🛎️", layou
 @st.cache_resource
 def load():
     get = lambda f: MODEL_DIR / f
-    pipe = joblib.load(get("model.joblib"))
+    pipe = Model(MODEL_DIR)                 # no pickle: loads with any recent pandas/xgboost
     config = json.load(open(get("config.json")))
     card = open(get("README.md")).read().split("---", 2)[-1].replace("\n# ", "\n#### ")
     bookings = pd.read_parquet(get("test_bookings.parquet"))
     features = config["numeric_features"] + config["categorical_features"]
-    bookings["p"] = pipe.predict_proba(bookings[features])[:, 1]
+    bookings["p"] = pipe.predict_proba(bookings[features])
     city = bookings[bookings["hotel"] == "City Hotel"]
     sizes = city.groupby("arrival_date").size()
     nights = sizes[(sizes >= 60) & (sizes <= 180)].index
@@ -46,11 +46,7 @@ def load():
 
 def reasons(pipe, features, rows, top=2):
     """SHAP contributions from XGBoost itself, added back up from one-hot columns to the original features."""
-    X = pipe[0].transform(rows[features])
-    contrib = pipe[-1].get_booster().predict(xgb.DMatrix(X), pred_contribs=True)[:, :-1]
-    names = [n.split("__", 1)[1] for n in pipe[0].get_feature_names_out()]
-    owner = [next(f for f in features if n == f or n.startswith(f + "_")) for n in names]
-    by_f = pd.DataFrame(contrib, columns=owner).T.groupby(level=0).sum().T
+    by_f = pipe.contributions(rows[features]).reset_index(drop=True)
     out = []
     for i, (_, row) in enumerate(rows.iterrows()):
         best = by_f.iloc[i].sort_values(ascending=False).head(top)
@@ -79,7 +75,7 @@ with st.sidebar:
     walk_cost = st.slider("Cost of walking a guest (EUR)", 100, 600, 250, 25,
                           help="Taxi, a room in another hotel, and an angry review.")
     hints = st.toggle("Show the model's forecast", value=True, help="Hard mode: play on gut feeling alone.")
-    st.caption(f"Model: `model/model.joblib` · version {config['version']} · test AUC {config['metrics_test']['auc']}")
+    st.caption(f"Model: `model/booster.json` · version {config['version']} · test AUC {config['metrics_test']['auc']}")
 
 st.title("🛎️ Tonight's front desk")
 tab_game, tab_check, tab_hood = st.tabs(["🎲 Play a night", "🔎 Check a booking", "⚙️ Under the hood"])
@@ -227,7 +223,7 @@ with tab_check:
     if go:
         row["total_guests"] = row["adults"] + row["children"] + row["babies"]
         one = pd.DataFrame([row])[features]
-        p = float(pipe.predict_proba(one)[0, 1])
+        p = float(pipe.predict_proba(one)[0])
         t = config["call_threshold"]
         left, right = st.columns(2)
         left.metric("Cancellation risk", f"{p:.0%}")
@@ -243,8 +239,8 @@ with tab_hood:
     st.graphviz_chart(f"""
 digraph {{ rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#F2F1F7", color="#211A52", fontname=Helvetica];
   user [label="Your browser"]; app [label="This app\\nStreamlit Community Cloud\\nbuilt from GitHub: app.py + requirements.txt"];
-  gh [label="GitHub repo\\napp.py · requirements.txt\\nmodel/: model.joblib · config.json · README.md"];
-  nb [label="Colab notebook\\ntrain, tune, check\\nsave the pipeline"];
+  gh [label="GitHub repo\\napp.py · requirements.txt\\nmodel/: booster.json · preprocess.json · config.json"];
+  nb [label="Colab notebook\\ntrain, tune, check\\nexport portable files"];
   nb -> gh [label="commit model files"]; gh -> app [label="build on push"]; user -> app [label="click"]; app -> user [label="page"]; }}
 """)
     left, right = st.columns(2)
@@ -258,8 +254,8 @@ digraph {{ rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#F2F1
 ### Make it yours
 1. **Fork** [aaubs/tonights-front-desk](https://github.com/aaubs/tonights-front-desk) on GitHub.
 2. On [share.streamlit.io](https://share.streamlit.io), sign in with GitHub and **Create app** from your fork
-   (file `app.py`, Python 3.12 under *Advanced settings*).
+   (file `app.py`; any Python version works).
 3. Change something small in `app.py` on GitHub: the costs, a meme, the number of nights. Commit, and watch the app update.
 4. Optional: train your own model in the notebook, download the `hotel_model` folder, and replace the files in
-   your fork's `model/` folder. Pin the versions from your `config.json` in `requirements.txt`.
+   your fork's `model/` folder (`booster.json`, `preprocess.json`, `config.json`, `README.md`).
 """)

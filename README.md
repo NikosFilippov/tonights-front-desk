@@ -11,18 +11,18 @@ You play against the model and against Gut Feeling Gus.
 | Piece | Where |
 |---|---|
 | App code | `app.py` (Streamlit), this repo |
-| Environment | `requirements.txt`, versions pinned to match the model |
-| Model | `model/`: the pipeline (`model.joblib`), `config.json` with versions and metrics, and the model card (`README.md`) |
+| Environment | `requirements.txt`: four packages, no version pins |
+| Model | `model/`: `booster.json` (XGBoost's own format) + `preprocess.json` (scaling and one-hot as plain numbers), `config.json` with metrics, and the model card (`README.md`). Loaded by `portable.py`, no pickle, so any Python version works |
 | Hosting | Streamlit Community Cloud, rebuilt on every push to `main` |
 
 ## Make it yours
 
 1. Fork this repo.
 2. On [share.streamlit.io](https://share.streamlit.io), sign in with GitHub, **Create app**, pick your fork and `app.py`.
-   Under *Advanced settings* choose **Python 3.12**.
+   Any Python version works.
 3. Change something in `app.py`, commit, and watch the app redeploy.
 4. Optional: train your own model with the session 10 notebook, download its `hotel_model` folder, and replace the
-   files in `model/`. Keep `requirements.txt` on the versions in your `config.json`.
+   files in `model/`. The notebook's download cell writes the portable files.
 
 Run locally: `pip install -r requirements.txt && streamlit run app.py`.
 

@@ -1,8 +1,5 @@
-# Same versions as in the model's config.json: a pickled pipeline only loads reliably with these
-scikit-learn==1.6.1
-xgboost==3.4.1
-pandas==2.2.2
-numpy==2.0.2
-pyarrow==25.0.1
-joblib
-streamlit==1.64.0
+# No version pins needed: the model is stored as XGBoost JSON + plain numbers (see portable.py), not a pickle
+streamlit
+xgboost
+pandas
+pyarrow
