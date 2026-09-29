@@ -1,5 +1,6 @@
-# No version pins needed: the model is stored as XGBoost JSON + plain numbers (see portable.py), not a pickle
+# No version pins needed: the model is stored as XGBoost JSON + plain numbers (see portable.py), not a pickle.
+# xgboost-cpu = the same library without the ~300 MB GPU (NCCL) dependency that the plain package pulls in on Linux.
 streamlit
-xgboost
+xgboost-cpu
 pandas
 pyarrow
