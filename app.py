@@ -182,7 +182,7 @@ st.markdown(
     decision about contacting a student.
     """
 )
-right.image(https://giphy.com/gifs/IntoAction-2020-graduation-class-of-kGuY7LXCNbUyCFbiNm ,  caption="via GIPHY")
+right.image("https://giphy.com/gifs/IntoAction-2020-graduation-class-of-kGuY7LXCNbUyCFbiNm" ,  caption="via GIPHY")
 
 
 # ============================================================
