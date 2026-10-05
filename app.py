@@ -184,7 +184,7 @@ st.markdown(
 )
 col1, col2, col3 = st.columns(3)
 with col3:
-    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWt1b3p1M3c0NHBneHRsbjFydzluMG9ucXhxMzh0OG5yNGt4dm9rZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TQNfs3iWR6fwtQvWFX/giphy.gif", width=400,caption="via GIPHY")
+    st.image("https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExanY2c2ozaDlwZHhmZTlnNmh4MXhhemY2NWRnbmZzMzV1eWJpMnNmciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gz5oKhml2Rmwg/giphy.gif", width=400,caption="via GIPHY")
    
 
 # ============================================================
