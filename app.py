@@ -191,7 +191,9 @@ st.markdown(
     decision about contacting a student.
     """
 )
-st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTc0OThqdmV6bW11M3Jtc2VtNGN0dmYzOGRrdWpqOTI4dnI1OHBwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/kGuY7LXCNbUyCFbiNm/giphy.gif", width=400)
+col1, col2, col3 = st.columns(3)
+with col3:
+    st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTc0OThqdmV6bW11M3Jtc2VtNGN0dmYzOGRrdWpqOTI4dnI1OHBwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/kGuY7LXCNbUyCFbiNm/giphy.gif", width=300)
 
 
 # ============================================================
