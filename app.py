@@ -13,7 +13,7 @@ from portable import Model
 # ============================================================
 
 st.set_page_config(
-    page_title="Study Office Risk Dashboard",
+    page_title="Study Office Risk Calculator",
     page_icon="🎓",
     layout="wide",
 )
@@ -170,7 +170,7 @@ def readable_signal(feature, value):
 # 5. Header
 # ============================================================
 
-st.title("🎓 Student Support Risk Dashboard")
+st.title("🎓 Student Support Risk Calculator")
 
 st.markdown(
     """
