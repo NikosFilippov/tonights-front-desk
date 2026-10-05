@@ -27,6 +27,15 @@ DATA_URL = (
 
 HISTORY_URL = DATA_URL + "history_week6.csv"
 NEW_URL = DATA_URL + "new_week6.csv"
+GIF = {k: f"https://media.giphy.com/media/{v}/giphy.gif" for k, v in {
+    "welcome": "MCudzuADLuJWw", "thinking": "WRQBXSCnEFJIuxktnw", "fire": "Z1BTGhofioRxK",
+    "empty": "3oriff4xQ7Oq2TIgTu", "nailed": "8VrtCswiLDNnO", "cheers": "DfLwM9kttDFEQ",
+    "pikachu": "6nWhy3ulBL7GSCvKw6", "win": "3oEduKVQdG4c0JVPSo"}.items()}
+LABEL = {"lead_time": "booked {v:.0f} days ahead", "total_nights": "{v:.0f} nights", "adr": "{v:.0f} EUR a night",
+         "previous_cancellations": "{v:.0f} earlier cancellations", "previous_bookings_not_canceled": "{v:.0f} earlier stays",
+         "is_repeated_guest": "repeat guest: {v:.0f}", "deposit_type": "deposit: {v}", "market_segment": "segment: {v}",
+         "customer_type": "customer: {v}", "agent": "agent {v}", "distribution_channel": "channel: {v}",
+         "arrival_weekday": "arrival weekday {v:.0f}"}
 
 
 # ============================================================
@@ -182,7 +191,6 @@ st.markdown(
     decision about contacting a student.
     """
 )
-right.image("https://giphy.com/gifs/IntoAction-2020-graduation-class-of-kGuY7LXCNbUyCFbiNm" ,  caption="via GIPHY")
 
 
 # ============================================================
