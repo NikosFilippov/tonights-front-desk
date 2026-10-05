@@ -1,8 +1,6 @@
 # 🛎️ Tonight's front desk
 
 An overbooking game for the MSc Business Data Science programme at Aalborg University (module 1, session 10).
-Five real nights at a Lisbon city hotel: how many extra rooms do you sell, knowing some guests will cancel?
-You play against the model and against Gut Feeling Gus.
 
 **Play:** https://tonights-front-desk.streamlit.app
 
