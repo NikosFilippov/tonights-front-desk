@@ -184,11 +184,8 @@ st.markdown(
 )
 col1, col2, col3 = st.columns(3)
 with col3:
-    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXgxZ3JvNjB6cXBwYXdmMTAyMHJqY20zMjBkdXdoOWhiYjk2cWhiNSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9Rjo1WLyS5LiOg1EdQ/giphy.gif", width=400,caption="via GIPHY")
+    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWt1b3p1M3c0NHBneHRsbjFydzluMG9ucXhxMzh0OG5yNGt4dm9rZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TQNfs3iWR6fwtQvWFX/giphy.gif", width=400,caption="via GIPHY")
    
-with col2:
-    st.image("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWt1b3p1M3c0NHBneHRsbjFydzluMG9ucXhxMzh0OG5yNGt4dm9rZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TQNfs3iWR6fwtQvWFX/giphy.gif" , width=400,caption = "via GIPHY")
-
 
 # ============================================================
 # 6. Recommended rule
